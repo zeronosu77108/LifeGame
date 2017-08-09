@@ -24,7 +24,7 @@ func newboard(w, h int) *board {
     for i:=0; i<h; i++ {
         b.board[i] = make([]bool, w)
         for j:=0; j<w; j++ {
-            if rand.Intn(7) == 0 {
+            if rand.Intn(5) == 0 {
                 b.board[i][j] = true
             }
         }
@@ -39,6 +39,7 @@ func  (b *board) render() {
                 termbox.SetCell(i,j,'■', termbox.ColorDefault, termbox.ColorDefault)
             } else {
                 termbox.SetCell(i,j,'□', termbox.ColorDefault, termbox.ColorDefault)
+                // termbox.SetCell(i,j,' ', termbox.ColorDefault, termbox.ColorDefault)
             }
         }
     }
@@ -114,7 +115,7 @@ func main() {
 		panic(err)
 	}
 
-    board := newboard(20,90)
+    board := newboard(30,90)
     board.render()
 
     keyCh := make(chan termbox.Key)
