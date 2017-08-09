@@ -19,6 +19,8 @@ func newboard(w, h int) *board {
     b.h = h
     b.board = make([][]bool, h)
 
+    rand.Seed(time.Now().UnixNano())
+
     for i:=0; i<h; i++ {
         b.board[i] = make([]bool, w)
         for j:=0; j<w; j++ {
@@ -43,13 +45,48 @@ func  (b *board) render() {
     termbox.Flush()
 }
 
-func (b *board) update(){
+func (b *board) update() {
+    board := make([][]bool, b.h)
     for i:=0; i<b.h; i++ {
+        board[i] = make([]bool, b.w)
         for j:=0; j<b.w; j++ {
-            b.board[i][j] = !b.board[i][j]
+            board[i][j] = b.is_alive(i,j)
         }
     }
+    b.board = board
 }
+
+func (b *board) count(i,j int) int {
+    if i < 0 || b.h <= i {
+        return 0
+    } else if j < 0 || b.w <= j {
+        return 0
+    } else if b.board[i][j] {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+func (b *board) is_alive(i,j int) bool {
+    c := b.count(i-1,j-1) +
+        b.count(i-1,j) +
+        b.count(i-1,j+1) +
+        b.count(i,j-1) +
+        b.count(i,j+1) +
+        b.count(i+1,j-1) +
+        b.count(i+1,j) +
+        b.count(i+1,j+1)
+
+    if c == 2 {
+        return b.board[i][j]
+    } else if c ==3 {
+        return true
+    } else {
+        return false
+    }
+}
+
 
 func keyEventInter(kch chan termbox.Key) {
 	for {
@@ -65,6 +102,7 @@ func timerInter(tch chan bool) {
 	for {
 		tch <- true
 		time.Sleep(1500 * time.Millisecond)
+		// time.Sleep(1500 * time.Millisecond)
 	}
 }
 
